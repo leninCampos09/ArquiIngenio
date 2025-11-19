@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Productos Destacados | ArquiIngenio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/app1.css">
+    <link rel="stylesheet" href="/css/products.css">
+    <link rel="stylesheet" href="/css/support-widget.css">
+        <style>
+            /* Sidebar responsive: oculta y deslizable en móvil/tableta */
+            @media (max-width: 900px) {
+                main > div {
+                    flex-direction: column;
+                }
+                aside {
+                    position: fixed;
+                    left: 0;
+                    top: 0;
+                    height: 100vh;
+                    width: 80vw;
+                    max-width: 340px;
+                    min-width: 0;
+                    background: #fff;
+                    z-index: 100;
+                    box-shadow: 2px 0 16px rgba(11,18,32,0.13);
+                    transform: translateX(-100%);
+                    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+                    margin-bottom: 0;
+                    border-radius: 0 12px 12px 0;
+                    overflow-y: auto;
+                    max-height: 100vh;
+                }
+                aside.sidebar-open {
+                    transform: translateX(0);
+                }
+                #sidebarOverlay {
+                    display: block;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    background: rgba(0,0,0,0.18);
+                    z-index: 99;
+                }
+                #filterToggleHeader {
+                    display: inline-block !important;
+                }
+            }
+            @media (min-width: 901px) {
+                #sidebarOverlay {
+                    display: none !important;
+                }
+                aside {
+                    position: static;
+                    transform: none !important;
+                    height: auto;
+                    box-shadow: 0 2px 16px rgba(11,18,32,0.07);
+                    border-radius: 16px;
+                }
+                #filterToggleHeader {
+                    display: none !important;
+                }
+            }
+        </style>
+</head>
+<style>
+    /* Sidebar responsive styles */
+    @media (max-width: 900px) {
+        main > div {
+            flex-direction: column;
+            gap: 0;
+        }
+        aside {
+            width: 100% !important;
+            min-width: 0 !important;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(11,18,32,0.07);
+            padding: 18px 10px 18px 10px;
+        }
+        section {
+            width: 100%;
+        }
+    }
+    @media (max-width: 600px) {
+        aside {
+            border-radius: 8px;
+            padding: 12px 4px 12px 4px;
+            font-size: 0.98rem;
+        }
+        main > div {
+            padding: 12px 2px 0 2px;
+        }
+    }
+    /* Fluent Design para el Sidebar */
+    aside {
+        background: rgba(255, 255, 255, 0.8); /* Efecto acrílico */
+        backdrop-filter: blur(10px); /* Desenfoque para el acrílico */
+        border-radius: 16px; /* Bordes redondeados */
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* Sombra suave */
+        transition: all 0.3s ease; /* Transiciones suaves */
+        border: 1px solid rgba(0, 120, 212, 0.2); /* Borde sutil */
+        animation: fadeIn 0.5s ease-in-out; /* Animación de entrada */
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    aside .filters-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #0078d4; /* Color principal */
+        margin-bottom: 12px;
+    }
+
+    aside label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1rem;
+        color: #333;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    aside label:hover {
+        color: #0078d4; /* Color de énfasis al pasar el mouse */
+    }
+
+    aside input[type="checkbox"] {
+        accent-color: #0078d4; /* Color personalizado para los checkboxes */
+    }
+
+    button#applyFilters {
+        padding: 10px 16px; /* Reducir el tamaño del botón */
+        background: linear-gradient(90deg, #0078d4, #005a9e); /* Gradiente para el botón */
+        box-shadow: 0 4px 8px rgba(0, 120, 212, 0.3); /* Sombra para el botón */
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        font-size: 1rem; /* Texto ligeramente más pequeño */
+        letter-spacing: 0.3px; /* Ajustar el espaciado entre letras */
+        line-height: 1.4; /* Ajustar la separación entre líneas */
+    }
+
+    button#applyFilters:hover {
+        transform: scale(1.05); /* Efecto de zoom al pasar el mouse */
+        box-shadow: 0 6px 12px rgba(0, 120, 212, 0.4); /* Sombra más pronunciada */
+    }
+
+    /* Sidebar responsive: oculta y deslizable en móvil/tableta */
+    @media (max-width: 900px) {
+        main > div {
+            flex-direction: column;
+        }
+        aside {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 80vw;
+            max-width: 340px;
+            min-width: 0;
+            background: #fff;
+            z-index: 100;
+            box-shadow: 2px 0 16px rgba(11,18,32,0.13);
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+            margin-bottom: 0;
+            border-radius: 0 12px 12px 0;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+        aside.sidebar-open {
+            transform: translateX(0);
+        }
+        #sidebarOverlay {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.18);
+            z-index: 99;
+        }
+        #filterToggleHeader {
+            display: inline-block !important;
+        }
+    }
+    @media (min-width: 901px) {
+        #sidebarOverlay {
+            display: none !important;
+        }
+        aside {
+            position: static;
+            transform: none !important;
+            height: auto;
+            box-shadow: 0 2px 16px rgba(11,18,32,0.07);
+            border-radius: 16px;
+        }
+        #filterToggleHeader {
+            display: none !important;
+        }
+    }
+</style>
+</head>
+<body>
+    <div id="sidebarOverlay" style="display:none;"></div>
+    <header style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:18px 12px 12px 12px;background:linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.55));box-shadow:0 8px 24px rgba(16,24,40,0.06);position:fixed;top:0;left:0;width:100vw;z-index:1000;border-bottom:1px solid rgba(255,255,255,0.4);">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:220px;">
+            <button id="filterToggleHeader" class="drawer-toggle header-toggle" aria-label="Abrir filtros" title="Abrir filtros" style="margin-right:8px;">☰</button>
+            <div class="brand" style="display:flex;align-items:center;gap:10px;">
+                <div class="logo">EA</div>
+                <div class="brand-title-desktop">
+                    <h1 style="font-size:18px;margin:0;font-weight:700;">ArquiIngenio</h1>
+                    <p style="margin:0;font-size:12px;color:#6b7280;">Herramientas, materiales y más</p>
+                </div>
+
+            <style>
+                /* Solo mostrar el título en escritorio */
+                .brand-title-desktop { display: block; }
+                @media (max-width: 900px) {
+                    .brand-title-desktop { display: none !important; }
+                }
+            </style>
+            </div>
+        </div>
+        <nav style="display:flex;align-items:center;gap:16px;flex:2;justify-content:flex-end;min-width:220px;">
+            <div class="search" role="search" style="min-width:180px;max-width:320px;width:100%;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M21 21l-4.35-4.35" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="11" cy="11" r="6" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></circle></svg>
+                <input id="searchInput" placeholder="Buscar producto, marca o categoría..." style="width:100%;border:0;background:transparent;outline:none;font-size:14px;" />
+            </div>
+            <button class="icon-btn" onclick="openCart()" title="Ver carrito" style="background:transparent;border:0;padding:8px;border-radius:8px;cursor:pointer;">
+                🛒 <span id="cartCount" style="margin-left:6px;font-weight:700">0</span>
+            </button>
+            <div class="user-dropdown" style="position:relative;display:inline-block">
+                <button id="loginToggle" class="icon-btn" aria-haspopup="true" aria-expanded="false" onclick="toggleLoginDropdown(event)" title="Iniciar sesión" style="background:transparent;border:0;padding:8px;border-radius:8px;cursor:pointer;">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </button>
+                <div id="loginDropdown" class="dropdown-menu" role="menu" aria-hidden="true" style="position:absolute;right:0;top:calc(100% + 8px);display:none;min-width:180px;background:#f8fafc;border-radius:8px;box-shadow:0 6px 18px rgba(11,18,32,0.15);border:1px solid #e6eef8;padding:0;z-index:40">
+                    <button class="dropdown-item" role="menuitem" style="display:block;width:100%;text-align:left;padding:12px 16px;border-radius:0;border:none;background:transparent;cursor:pointer;font-weight:500;color:#0b1220" onmouseover="this.style.background='rgba(0,120,212,0.08)'" onmouseout="this.style.background='transparent'" onclick="openLogin();toggleLoginDropdown()">Acceder</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+        <main style="background:#f6f8fa;min-height:100vh;padding-top:90px;">
+            <div style="max-width:1400px;margin:0 auto;display:flex;gap:32px;padding:32px 16px 0 16px;position:relative;">
+                <!-- Sidebar filtros -->
+                <aside style="width:320px;min-width:260px;background:white;border-radius:16px;box-shadow:0 2px 16px rgba(11,18,32,0.07);padding:24px 18px 24px 18px;display:flex;flex-direction:column;gap:18px">
+                    <div style="position:sticky;top:0;z-index:2;background:white;padding-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;">
+                        <div style="font-size:1.1rem;color:#0078d4;font-weight:700;">Filtros</div>
+                        <button id="sidebarCloseBtn" aria-label="Cerrar filtros" style="display:none;background:transparent;border:0;padding:6px;border-radius:8px;cursor:pointer;font-size:26px;z-index:101;line-height:1;">
+                            &#10005;
+                        </button>
+                    </div>
+                    <div style="flex:1;overflow-y:auto;min-height:0;">
+                        <div id="specialFilters" style="display:flex;flex-direction:column;gap:10px;">
+                            <label><input type="checkbox" data-filter="special" value="online"> Especiales en línea</label>
+                            <label><input type="checkbox" data-filter="special" value="promotions"> Promociones</label>
+                            <label><input type="checkbox" data-filter="special" value="extreme"> Ofertas Extremas</label>
+                        </div>
+                        <div style="font-weight:700;margin-top:10px">DISPONIBILIDAD</div>
+                        <label><input id="availOnly" type="checkbox"> Solo disponibles</label>
+                        <div style="font-weight:700;margin-top:10px">PRECIO</div>
+                        <div style="display:flex;gap:8px;align-items:center">
+                            <input id="minPrice" type="number" placeholder="Min ($)" style="width:80px;padding:6px;border-radius:6px;border:1px solid #e6eef8">
+                            <span>a</span>
+                            <input id="maxPrice" type="number" placeholder="Max ($)" style="width:80px;padding:6px;border-radius:6px;border:1px solid #e6eef8">
+                        </div>
+                        <div style="font-weight:700;margin-top:10px">CATEGORÍAS</div>
+                        <div id="categoryFilters" style="display:flex;flex-direction:column;gap:6px">
+                            <label><input data-filter="category" value="herramientas" type="checkbox"> Herramientas</label>
+                            <label><input data-filter="category" value="planos" type="checkbox"> Planos</label>
+                            <label><input data-filter="category" value="software" type="checkbox"> Software</label>
+                            <label><input data-filter="category" value="materiales" type="checkbox"> Materiales</label>
+                            <label><input data-filter="category" value="hardware" type="checkbox"> Hardware</label>
+                            <label><input data-filter="category" value="muebles" type="checkbox"> Muebles</label>
+                            <label><input data-filter="category" value="computacion" type="checkbox"> Computación</label>
+                            <label><input data-filter="category" value="memorias" type="checkbox"> Memorias</label>
+                            <label><input data-filter="category" value="ups" type="checkbox"> UPS</label>
+                            <label><input data-filter="category" value="discos" type="checkbox"> Discos</label>
+                            <label><input data-filter="category" value="tintas" type="checkbox"> Tintas</label>
+                            <label><input data-filter="category" value="iluminacion" type="checkbox"> Iluminación</label>
+                        </div>
+                        <div style="font-weight:700;margin-top:10px">MARCAS</div>
+                        <input id="brandSearch" type="text" placeholder="Buscar" style="width:100%;padding:6px;border-radius:6px;border:1px solid #e6eef8;margin-bottom:8px">
+                        <div id="brandFilters" style="display:flex;flex-direction:column;gap:6px;">
+                            <label><input data-filter="brand" value="ProTools" type="checkbox"> ProTools</label>
+                            <label><input data-filter="brand" value="ArquiDocs" type="checkbox"> ArquiDocs</label>
+                            <label><input data-filter="brand" value="SoftLab" type="checkbox"> SoftLab</label>
+                            <label><input data-filter="brand" value="ToolWorks" type="checkbox"> ToolWorks</label>
+                            <label><input data-filter="brand" value="TechCore" type="checkbox"> TechCore</label>
+                            <label><input data-filter="brand" value="PowerSafe" type="checkbox"> PowerSafe</label>
+                        </div>
+                        <button id="applyFilters" style="margin-top:12px;padding:10px 16px;background:#0078d4;color:white;border:0;border-radius:8px;font-weight:700;font-size:1rem;cursor:pointer">Filtrar</button>
+                    </div>
+                </aside>
+                <!-- Contenido principal -->
+                <section style="flex:1">
+                    <nav style="font-size:1rem;color:#6b7280;margin-bottom:18px">
+                        <a href="index.html" style="color:#6b7280;text-decoration:none">Inicio</a> / <span style="color:#0078d4;font-weight:700">Destacados del mes</span>
+                    </nav>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+                        <h1 style="font-size:2.2rem;font-weight:800;color:#0b1220;margin:0">Destacados del mes</h1>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span style="color:#6b7280;font-size:1rem">Orden</span>
+                            <div id="sortDropdown" class="fluent-dropdown" style="position:relative">
+                                <button id="sortToggle" class="select" type="button" aria-haspopup="listbox" aria-expanded="false">Relevancia</button>
+                                <ul id="sortOptions" role="listbox" aria-label="Ordenar productos" hidden class="dropdown-options" style="position:absolute;right:0;top:calc(100% + 8px);min-width:180px;z-index:60;background:white;border-radius:8px;box-shadow:0 8px 28px rgba(3,24,48,0.12);padding:6px 0;list-style:none;margin:0">
+                                    <li role="option" data-value="Relevancia" aria-selected="true" tabindex="0" style="padding:8px 14px;cursor:pointer">Relevancia</li>
+                                    <li role="option" data-value="Precio menor" tabindex="0" style="padding:8px 14px;cursor:pointer">Precio menor</li>
+                                    <li role="option" data-value="Precio mayor" tabindex="0" style="padding:8px 14px;cursor:pointer">Precio mayor</li>
+                                    <li role="option" data-value="Descuento" tabindex="0" style="padding:8px 14px;cursor:pointer">Descuento</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="flex gap-8" style="margin-bottom:18px;justify-content:flex-end;align-items:center;">
+                            <label class="muted">Vista</label>
+                            <button class="btn btn-ghost view-btn" onclick="gridView()" id="gridBtn" style="background:var(--accent);color:white">Grid</button>
+                            <button class="btn btn-ghost view-btn" onclick="listView()" id="listBtn">Lista</button>
+                        </div>
+                        <div id="products" class="products" aria-live="polite"></div>
+                        <!-- Fluent toast container -->
+                        <div id="fluentToastContainer" aria-live="polite" aria-atomic="true"></div>
+                        <!-- Modal backdrop (used by products.js) -->
+                        <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none">
+                          <div class="modal" id="modalContent"></div>
+                        </div>
+                        <!-- Hidden cart counters for compatibility with products.js -->
+                        <div style="display:none">
+                          <span id="cartCount">0</span>
+                          <span id="cartTotal">0.00</span>
+                          <span id="shownCount">0</span>
+                        </div>
+                </section>
+            </div>
+        </main>
+    <footer>
+        <div class="footer-content">
+            <div>
+                <h3>ArquiIngenio</h3>
+                <p>Tu tienda de confianza para todos tus productos favoritos.</p>
+            </div>
+            <div>
+                <h3>Enlaces</h3>
+                <a href="productos.html">Productos</a><br>
+                <a href="#servicios">Servicios</a><br>
+                <a href="#contacto">Contacto</a>
+            </div>
+            <div id="contacto">
+                <h3>Contacto</h3>
+                <p>Email: info@mitienda.com<br>
+                    Teléfono: (123) 456-7890</p>
+            </div>
+            <div>
+                <h3>Síguenos</h3>
+                <div class="socials" aria-hidden="false">
+                    <a href="#" aria-label="Facebook" title="Facebook">
+                        <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+                            <path d="M22 12.07C22 6.55 17.52 2 12 2S2 6.55 2 12.07C2 17.1 5.66 21.22 10.44 21.98v-7.03H7.9v-2.9h2.54V9.41c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.9h-2.34V22C18.34 21.22 22 17.1 22 12.07z" />
+                        </svg>
+                    </a>
+                    <a href="#" aria-label="Instagram" title="Instagram">
+                        <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+                            <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 3a1 1 0 110 2 1 1 0 010-2zM12 7.5A4.5 4.5 0 1012 16.5 4.5 4.5 0 0012 7.5zm0 2a2.5 2.5 0 110 5 2.5 2.5 0 010-5z" />
+                        </svg>
+                    </a>
+                    <a href="#" aria-label="LinkedIn" title="LinkedIn">
+                        <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+                            <path d="M4.98 3.5A2.5 2.5 0 102 6a2.5 2.5 0 002.98-2.5zM3 8.98h4V21H3zM9 8.98h3.82v1.63h.05c.53-1 1.84-2.05 3.79-2.05 4.05 0 4.8 2.66 4.8 6.12V21h-4V15.2c0-1.39-.03-3.18-1.94-3.18-1.94 0-2.24 1.52-2.24 3.08V21H9z" />
+                        </svg>
+                    </a>
+                    <a href="#" aria-label="Twitter" title="Twitter">
+                        <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+                            <path d="M22 5.92c-.66.3-1.36.5-2.09.6.75-.45 1.33-1.16 1.6-2.01-.7.42-1.48.72-2.31.88a3.5 3.5 0 00-6 3.19A9.93 9.93 0 013 5.1a3.49 3.49 0 001.08 4.66c-.6-.02-1.16-.18-1.65-.45v.05a3.5 3.5 0 002.8 3.43c-.5.13-1.02.16-1.55.06a3.51 3.51 0 003.27 2.44A7.02 7.02 0 013 18.58a9.9 9.9 0 005.36 1.57c6.43 0 9.95-5.33 9.95-9.95v-.45A7.1 7.1 0 0022 5.92z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h3>Sucursal San Miguel</h3>
+                <div class="footer-info">
+                    <p>3ra Calle Poniente, San Miguel<br>
+                        Edificio Principal, Local #2<br>
+                        San Miguel, El Salvador</p>
+
+                    <h4 style="margin:12px 0 4px">Horario de Atención</h4>
+                    <ul class="schedule-list">
+                        <li><span>Lunes a Viernes</span> <span>8:00 AM - 6:00 PM</span></li>
+                        <li><span>Sábados</span> <span>9:00 AM - 2:00 PM</span></li>
+                        <li><span>Domingos</span> <span>Cerrado</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <h3>Métodos de Pago</h3>
+                <div class="payment-methods">
+                    <div class="payment-method">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M15.4 9.3H13L11.8 13h2.4l1.2-3.7zM23 4.9v14.2c0 2.1-1.7 3.9-3.9 3.9H4.9C2.7 23 1 21.2 1 19.1V4.9C1 2.7 2.7 1 4.9 1h14.2C21.2 1 23 2.7 23 4.9zm-4.7 8.6l2.1-5.9h-2.6l-1.4 4.1-.2.5-.2-.5-1.3-4.1h-2.7l-.7 2-.7-2H8.7l2.5 6.7-1.1 3.1h2.5l3.3-9.1.1-.2.1.2 1 2.7-.8 2.3h2.5l.5-1.6z" />
+                        </svg>
+                        <span>Visa</span>
+                    </div>
+                    <div class="payment-method">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm5.5 5.5h-11c-.3 0-.5.2-.5.5v8c0 .3.2.5.5.5h11c.3 0 .5-.2.5-.5v-8c0-.3-.2-.5-.5-.5z" />
+                        </svg>
+                        <span>MasterCard</span>
+                    </div>
+                    <div class="payment-method">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M22 4.5C22 3.1 20.9 2 19.5 2h-15C3.1 2 2 3.1 2 4.5v15C2 20.9 3.1 22 4.5 22h15c1.4 0 2.5-1.1 2.5-2.5v-15zm-5.7 11.6c-.5 1.4-1.7 2.3-3.2 2.3-1.8 0-3.2-1.4-3.2-3.2s1.4-3.2 3.2-3.2c.8 0 1.6.3 2.2.9l1.7-1.7c-1.1-1.1-2.5-1.7-4-1.7-3.2 0-5.7 2.6-5.7 5.7 0 3.2 2.6 5.7 5.7 5.7 2.5 0 4.7-1.6 5.4-4l-2.1-.8z" />
+                        </svg>
+                        <span>AmEx</span>
+                    </div>
+                    <div class="payment-method">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M20.7 2H3.3C2.6 2 2 2.6 2 3.3v17.3C2 21.4 2.6 22 3.3 22h17.3c.8 0 1.3-.6 1.3-1.3V3.3c.1-.7-.5-1.3-1.2-1.3zM8.3 19.3H5.2v-8.4h3.1v8.4zm-1.6-9.5c-1 0-1.8-.8-1.8-1.8s.8-1.8 1.8-1.8 1.8.8 1.8 1.8-.8 1.8-1.8 1.8zm11.5 9.5h-3.1v-4.8c0-1.2 0-2.7-1.7-2.7s-1.9 1.3-1.9 2.6v4.9h-3.1v-8.4h2.9v1.3c.4-.8 1.4-1.7 3-1.7 3.2 0 3.8 2.1 3.8 4.9v3.9z" />
+                        </svg>
+                        <span>PayPal</span>
+                    </div>
+                    <div class="payment-method">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm3.8 14.5c-.2.6-.7.8-1.2.6l-3.3-1.3-1.7 1.7c-.1.1-.2.1-.3.1s-.2 0-.3-.1l-.4-1.9-1.9-.4c-.2-.1-.3-.3-.3-.5s.1-.4.3-.5l1.7-1.7-1.3-3.3c-.2-.5 0-1 .6-1.2l3.9-1.6c.5-.2 1 0 1.2.6l1.6 3.9 3.9 1.6c.5.2.8.7.6 1.2l-1.6 3.9-1.6-3.9 1.1-2.8-2.8 1.1-3.9-1.6 3.9 1.6 1.7 4.2 4.2 1.7z" />
+                        </svg>
+                        <span>Bitcoin</span>
+                    </div>
+                    <div class="payment-method">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm3.5 14.5h-7c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h7c.3 0 .5.2.5.5s-.2.5-.5.5zm0-3h-7c-.3 0-.5-.2-.5-.5s.2-.5.5-.5h7c.3 0 .5.2.5.5s-.2.5-.5.5z" />
+                        </svg>
+                        <span>Efectivo</span>
+                    </div>
+                    <div class="payment-method">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M21 7L3 7 3 5 21 5zM21 11L3 11 3 9 21 9zM21 15L3 15 3 13 21 13zM21 19L3 19 3 17 21 17z" />
+                        </svg>
+                        <span>Transferencia</span>
+                    </div>
+                </div>
+                <p class="footer-info" style="margin-top:12px">
+                    Procesamos pagos de forma segura<br>con encriptación de datos
+                </p>
+            </div>
+        </div>
+    </footer>
+        <script src="/js/products.js"></script>
+                        <script>
+                        // Sidebar drawer para móvil/tableta
+                        (function(){
+                            var sidebar = document.querySelector('aside');
+                            var overlay = document.getElementById('sidebarOverlay');
+                            var toggleBtn = document.getElementById('filterToggleHeader');
+                            var closeBtn = document.getElementById('sidebarCloseBtn');
+                            function openSidebar() {
+                                if(sidebar) sidebar.classList.add('sidebar-open');
+                                if(overlay) overlay.style.display = 'block';
+                                document.body.style.overflow = 'hidden';
+                                if(closeBtn && window.innerWidth <= 900) closeBtn.style.display = 'inline-flex';
+                            }
+                            function closeSidebar() {
+                                if(sidebar) sidebar.classList.remove('sidebar-open');
+                                if(overlay) overlay.style.display = 'none';
+                                document.body.style.overflow = '';
+                                if(closeBtn) closeBtn.style.display = 'none';
+                            }
+                            if(toggleBtn) toggleBtn.addEventListener('click', openSidebar);
+                            if(overlay) overlay.addEventListener('click', closeSidebar);
+                            if(closeBtn) closeBtn.addEventListener('click', closeSidebar);
+                            // Cerrar con ESC
+                            document.addEventListener('keydown', function(e){
+                                if(e.key==='Escape') closeSidebar();
+                            });
+                            // Cerrar al cambiar tamaño a escritorio
+                            window.addEventListener('resize', function(){
+                                if(window.innerWidth > 900) closeSidebar();
+                                if(closeBtn) closeBtn.style.display = (window.innerWidth <= 900 && sidebar.classList.contains('sidebar-open')) ? 'inline-flex' : 'none';
+                            });
+                        })();
+                        </script>
+        <script>
+            // Mostrar sólo productos destacados (IDs seleccionados) y habilitar ordenamiento
+            (function(){
+                try{
+                    const featuredIds = [1,2,3,12,6,22]; // ajusta IDs según quieras
+                    let featured = (typeof PRODUCTS!=='undefined') ? PRODUCTS.filter(p=> featuredIds.includes(p.id)) : [];
+                    // Filtro por texto en el buscador
+                    const searchInput = document.getElementById('searchInput');
+                    if (searchInput) {
+                        searchInput.addEventListener('input', function() {
+                            const query = this.value.trim().toLowerCase();
+                            let filtered = featured.filter(p => {
+                                return (p.title && p.title.toLowerCase().includes(query)) ||
+                                       (p.manufacturer && p.manufacturer.toLowerCase().includes(query)) ||
+                                       (p.category && p.category.toLowerCase().includes(query));
+                            });
+                            // Render con el filtro aplicado
+                            renderSorted(getCurrent(), filtered);
+                        });
+                    }
+
+                                        function renderSorted(option, list){
+                                            let lst = Array.isArray(list) ? list.slice() : featured.slice(); // copy
+                                            if(option === 'Precio menor') lst.sort((a,b)=>a.price - b.price);
+                                            else if(option === 'Precio mayor') lst.sort((a,b)=>b.price - a.price);
+                                            else if(option === 'Descuento') lst.sort((a,b)=>{
+                                                const da = ((a.previousPrice||a.price) - a.price) || 0;
+                                                const db = ((b.previousPrice||b.price) - b.price) || 0;
+                                                return db - da; // mayores descuentos primero
+                                            });
+                                            // Relevancia (por defecto) mantiene el orden de `featured`
+                                            if(typeof renderFeatured === 'function') renderFeatured(lst);
+                                        }
+
+                                        // Apply filters and render
+                                        function applyFiltersAndRender(sortOption){
+                                            // collect filters
+                                            const specialsChecked = Array.from(document.querySelectorAll('#specialFilters input[data-filter="special"]:checked')).map(i=>i.value);
+                                            const categoriesChecked = Array.from(document.querySelectorAll('#categoryFilters input[data-filter="category"]:checked')).map(i=>i.value.toLowerCase());
+                                            const brandsChecked = Array.from(document.querySelectorAll('#brandFilters input[data-filter="brand"]:checked')).map(i=>i.value.toLowerCase());
+                                            const brandQuery = (document.getElementById('brandSearch')||{}).value || '';
+                                            const availOnly = !!document.getElementById('availOnly') && document.getElementById('availOnly').checked;
+                                            const minP = parseFloat((document.getElementById('minPrice')||{}).value) || null;
+                                            const maxP = parseFloat((document.getElementById('maxPrice')||{}).value) || null;
+
+                                            let list = featured.slice();
+
+                                            // specials: online -> category planos/software, promotions -> previousPrice exists, extreme -> price >= 300
+                                            if(specialsChecked.length){
+                                                list = list.filter(p => {
+                                                    let keep = false;
+                                                    for(const s of specialsChecked){
+                                                        if(s==='online' && ['planos','software'].includes((p.category||'').toLowerCase())) keep = true;
+                                                        if(s==='promotions' && typeof p.previousPrice !== 'undefined') keep = true;
+                                                        if(s==='extreme' && p.price >= 300) keep = true;
+                                                    }
+                                                    return keep;
+                                                });
+                                            }
+
+                                            // categories
+                                            if(categoriesChecked.length){
+                                                list = list.filter(p => categoriesChecked.some(c => (p.category||'').toLowerCase().includes(c)));
+                                            }
+
+                                            // --- ACTUALIZAR CHECKBOXES DE MARCAS SEGÚN CATEGORÍA ---
+                                            (function updateBrandCheckboxes(){
+                                                const brandFilters = document.getElementById('brandFilters');
+                                                if(!brandFilters) return;
+                                                // Filtrar productos por categoría seleccionada
+                                                let filtered = featured.slice();
+                                                if(categoriesChecked.length){
+                                                    filtered = filtered.filter(p => categoriesChecked.some(c => (p.category||'').toLowerCase().includes(c)));
+                                                }
+                                                // Obtener marcas únicas de los productos filtrados
+                                                const brands = Array.from(new Set(filtered.map(p => p.manufacturer))).filter(Boolean).sort();
+                                                // Guardar marcas seleccionadas antes de actualizar
+                                                const selectedBrands = Array.from(brandFilters.querySelectorAll('input[data-filter="brand"]:checked')).map(i=>i.value);
+                                                // Renderizar checkboxes
+                                                brandFilters.innerHTML = brands.length ? brands.map(b => `<label><input data-filter="brand" value="${b}" type="checkbox"${selectedBrands.includes(b)?' checked':''}> ${b}</label>`).join('') : '<div class="muted">No hay marcas para esta categoría</div>';
+                                            })();
+                                            // brands (checkboxes + search input)
+                                            if(brandsChecked.length || (brandQuery && brandQuery.trim())){
+                                                const q = brandQuery.trim().toLowerCase();
+                                                list = list.filter(p => {
+                                                    const m = (p.manufacturer||'').toLowerCase();
+                                                    const matchChecked = brandsChecked.length ? brandsChecked.some(b => m.includes(b.toLowerCase())) : true;
+                                                    const matchQuery = q ? m.includes(q) || (p.title||'').toLowerCase().includes(q) : true;
+                                                    return matchChecked && matchQuery;
+                                                });
+                                            }
+
+                                            // availability
+                                            if(availOnly){ list = list.filter(p => (p.stock||0) > 0); }
+
+                                            // price range
+                                            if(minP !== null){ list = list.filter(p => p.price >= minP); }
+                                            if(maxP !== null){ list = list.filter(p => p.price <= maxP); }
+
+                                            // if no results and user selected categories, show a specific message
+                                            function clearFilters(){
+                                                // reset all filter inputs
+                                                document.querySelectorAll('#specialFilters input, #categoryFilters input, #brandFilters input').forEach(i=> i.checked = false);
+                                                const bs = document.getElementById('brandSearch'); if(bs) bs.value = '';
+                                                const minI = document.getElementById('minPrice'); if(minI) minI.value = '';
+                                                const maxI = document.getElementById('maxPrice'); if(maxI) maxI.value = '';
+                                                const avail = document.getElementById('availOnly'); if(avail) avail.checked = false;
+                                                // re-apply filters with default sort
+                                                applyFiltersAndRender(getCurrent());
+                                                // focus first filter for discoverability
+                                                const firstCat = document.querySelector('#categoryFilters input'); if(firstCat) firstCat.focus();
+                                            }
+
+                                            if(list.length === 0){
+                                                const productsEl = document.getElementById('products');
+                                                const selectedCats = categoriesChecked || [];
+                                                let msg = 'No se encontraron productos destacados.';
+                                                if(selectedCats.length === 1){
+                                                    msg = `No hay productos destacados en la categoría "${selectedCats[0]}".`;
+                                                } else if(selectedCats.length > 1){
+                                                    msg = `No hay productos destacados que coincidan con las categorías seleccionadas (${selectedCats.join(', ')}).`;
+                                                }
+                                                productsEl.innerHTML = `
+                                                    <div class="no-results" style="padding:28px 20px;margin:18px 0;background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(3,24,48,0.06);display:flex;flex-direction:column;align-items:center;gap:12px">
+                                                        <div style="font-weight:800;font-size:1.1rem;color:#0b1220">${msg}</div>
+                                                        <div style="color:#6b7280">Prueba quitando filtros o eligiendo otra categoría.</div>
+                                                        <div style="display:flex;gap:8px;margin-top:8px">
+                                                            <button id="clearFiltersBtn" style="padding:10px 14px;border-radius:8px;border:0;background:#0078d4;color:#fff;font-weight:700;cursor:pointer">Limpiar filtros</button>
+                                                            <button id="backTopBtn" style="padding:10px 14px;border-radius:8px;border:1px solid #e6eef8;background:#fff;color:#0b1220;cursor:pointer">Volver arriba</button>
+                                                        </div>
+                                                    </div>`;
+                                                // wire buttons
+                                                setTimeout(()=>{
+                                                    const cbtn = document.getElementById('clearFiltersBtn'); if(cbtn) cbtn.addEventListener('click', clearFilters);
+                                                    const bbtn = document.getElementById('backTopBtn'); if(bbtn) bbtn.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}));
+                                                }, 10);
+                                                // update shownCount if needed
+                                                const shownCount = document.getElementById('shownCount'); if(shownCount) shownCount.textContent = '0';
+                                                return; // nothing to render via renderFeatured
+                                            }
+
+                                            // finally sort and render
+                                            renderSorted(sortOption||getCurrent(), list);
+                                        }
+
+
+                                        // Inicial render using custom dropdown
+                                        const sortToggle = document.getElementById('sortToggle');
+                                        const sortOptions = document.getElementById('sortOptions');
+                                        const optionItems = sortOptions ? Array.from(sortOptions.querySelectorAll('li')) : [];
+
+                                        function getCurrent(){ const sel = sortOptions ? sortOptions.querySelector('li[aria-selected="true"]') : null; return sel ? sel.dataset.value : 'Relevancia'; }
+                                        // initial render using filters
+                                        applyFiltersAndRender(getCurrent());
+
+                                        function closeOptions(){ if(sortOptions){ sortOptions.hidden = true; sortToggle.setAttribute('aria-expanded','false'); } }
+                                        function openOptions(){ if(sortOptions){ sortOptions.hidden = false; sortToggle.setAttribute('aria-expanded','true'); const sel = sortOptions.querySelector('li[aria-selected="true"]'); (sel||optionItems[0])?.focus(); } }
+
+                                        // Toggle click
+                                        if(sortToggle){ sortToggle.addEventListener('click', ()=>{ if(sortOptions && !sortOptions.hidden) closeOptions(); else openOptions(); }); }
+
+                                        // Option select handling
+                                        optionItems.forEach(li=>{
+                                            li.addEventListener('click', ()=>{
+                                                optionItems.forEach(x=> x.removeAttribute('aria-selected'));
+                                                li.setAttribute('aria-selected','true');
+                                                sortToggle.textContent = li.dataset.value;
+                                                // when changing sort, apply filters too
+                                                applyFiltersAndRender(li.dataset.value);
+                                                closeOptions();
+                                            });
+                                            li.addEventListener('keydown', (e)=>{
+                                                if(e.key==='Enter'){ e.preventDefault(); li.click(); }
+                                                else if(e.key==='ArrowDown'){ e.preventDefault(); (li.nextElementSibling||optionItems[0]).focus(); }
+                                                else if(e.key==='ArrowUp'){ e.preventDefault(); (li.previousElementSibling||optionItems[optionItems.length-1]).focus(); }
+                                                else if(e.key==='Escape'){ closeOptions(); sortToggle.focus(); }
+                                            });
+                                        });
+
+                                        // Toggle keyboard to open
+                                        if(sortToggle){ sortToggle.addEventListener('keydown',(e)=>{ if(e.key==='ArrowDown' || e.key==='Enter' || e.key===' '){ e.preventDefault(); openOptions(); } }); }
+
+                                        // Close when clicking outside
+                                        document.addEventListener('click',(e)=>{ const dd = document.getElementById('sortDropdown'); if(dd && !dd.contains(e.target)) closeOptions(); });
+
+                                        // Hook filter button and inputs
+                                        const applyBtn = document.getElementById('applyFilters');
+                                        if(applyBtn) applyBtn.addEventListener('click', ()=> applyFiltersAndRender(getCurrent()));
+                                        // optional: apply on change for quick feedback
+                                        document.querySelectorAll('#specialFilters input, #categoryFilters input, #brandFilters input, #availOnly, #minPrice, #maxPrice').forEach(el=> el.addEventListener('change', ()=> applyFiltersAndRender(getCurrent())));
+
+                }catch(e){console.error(e)}
+            })();
+        </script>
+        <script>
+  // JavaScript to toggle between grid and list views
+  document.addEventListener('DOMContentLoaded', () => {
+    const productsContainer = document.getElementById('products');
+    const gridViewBtn = document.getElementById('gridViewBtn');
+    const listViewBtn = document.getElementById('listViewBtn');
+
+    if (productsContainer) {
+      // Default to grid view
+      productsContainer.classList.add('grid-view');
+
+      gridViewBtn.addEventListener('click', () => {
+        productsContainer.classList.remove('list-view');
+        productsContainer.classList.add('grid-view');
+        document.getElementById('gridBtn').classList.add('active');
+        document.getElementById('listBtn').classList.remove('active');
+      });
+
+      listViewBtn.addEventListener('click', () => {
+        productsContainer.classList.remove('grid-view');
+        productsContainer.classList.add('list-view');
+        document.getElementById('listBtn').classList.add('active');
+        document.getElementById('gridBtn').classList.remove('active');
+      });
+    }
+  });
+</script>
+        <script src="/js/support-widget.js" defer></script>
+        <style>
+          .view-btn {
+            padding: 8px 16px;
+            border: 1px solid #0078d4;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+          }
+
+          .view-btn.active {
+            background-color: #0078d4;
+            color: white;
+            border-color: #0078d4;
+          }
+
+          .view-btn:not(.active) {
+            background-color: white;
+            color: #0078d4;
+            border-color: #0078d4;
+          }
+
+          .view-btn:hover {
+            background-color: #005a9e;
+            color: white;
+          }
+        </style>
+
+        <script>
+        // Update button styles dynamically
+        function gridView() {
+            const productsContainer = document.getElementById('products');
+            if (productsContainer) {
+                productsContainer.classList.remove('list-view');
+                productsContainer.classList.add('grid-view');
+                document.getElementById('gridBtn').classList.add('active');
+                document.getElementById('listBtn').classList.remove('active');
+            }
+        }
+
+        function listView() {
+            const productsContainer = document.getElementById('products');
+            if (productsContainer) {
+                productsContainer.classList.remove('grid-view');
+                productsContainer.classList.add('list-view');
+                document.getElementById('listBtn').classList.add('active');
+                document.getElementById('gridBtn').classList.remove('active');
+            }
+        }
+        </script>
+
+        <!-- Live chat modal -->
+    <div id="sw-livechat-modal" class="sw-livechat" aria-hidden="true" role="dialog" aria-label="Chat en vivo">
+        <div class="sw-livechat-header">
+            <div class="sw-header-left">
+                <div class="sw-header-avatar" aria-hidden="true">
+                    <img src="/avatares/lu.jpg" alt="Agente" />
+                </div>
+                <div class="sw-header-info">
+                    <strong>Servicio al Cliente</strong>
+                    <div class="sw-header-sub">¡Escríbanos, estamos para ayudarle!</div>
+                </div>
+            </div>
+            <button id="sw-livechat-close" aria-label="Cerrar chat">✕</button>
+        </div>
+        <div id="sw-livechat-body" class="sw-livechat-body" aria-live="polite"></div>
+        <form id="sw-livechat-form" class="sw-livechat-form">
+            <button type="button" class="sw-attach" aria-label="Adjuntar">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.44 11.05l-8.49 8.49a5.5 5.5 0 01-7.78-7.78l7.78-7.78a4 4 0 015.66 5.66l-6.36 6.36a2 2 0 11-2.83-2.83l4.95-4.95"/></svg>
+            </button>
+            <input id="sw-livechat-input" type="text" placeholder="Escribe aquí" aria-label="Mensaje de chat">
+            <button type="submit" class="sw-send" aria-label="Enviar">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"/><path d="M22 2l-7 20  -3-9-9-3 20-8z"/></svg>
+            </button>
+        </form>
+    </div>
+
+   <!-- Tessa IA Modal -->
+<div id="sw-tessa-modal" class="sw-livechat" aria-hidden="true" role="dialog" aria-label="Tessa IA">
+    
+    <div class="sw-livechat-header" style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <div class="sw-header-left">
+            <div class="sw-header-avatar" aria-hidden="true" style="background:#f0f2f5;display:flex;align-items:center;justify-content:center;border-radius:50%">
+                <!-- Avatar chat bot SVG -->
+                <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                  <!-- Head -->
+                  <ellipse cx="18" cy="16" rx="12" ry="12" fill="#e8eaed"/>
+                  <!-- Antenna -->
+                  <rect x="16" y="2" width="4" height="8" rx="2" fill="#00d4ff"/>
+                  <circle cx="18" cy="2" r="2" fill="#00d4ff"/>
+                  <!-- Face screen -->
+                  <ellipse cx="18" cy="18" rx="10" ry="8" fill="#1a3a52"/>
+                  <!-- Eyes -->
+                  <circle cx="14" cy="18" r="2" fill="#00e8ff"/>
+                  <circle cx="22" cy="18" r="2" fill="#00e8ff"/>
+                  <!-- Smile -->
+                  <path d="M14 22 Q18 26 22 22" stroke="#00e8ff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="sw-header-info">
+                <strong>Tessa IA</strong>
+                <div class="sw-header-sub">Asistente inteligente 24/7</div>
+            </div>
+        </div>
+        <button id="sw-tessa-close" aria-label="Cerrar chat">✕</button>
+    </div>
+
+    <!-- FIX: justify-content:flex-start + allow overflow for scrolling -->
+    <div id="sw-tessa-body" class="sw-livechat-body" aria-live="polite"
+         style="display:flex;flex-direction:column;gap:12px;justify-content:flex-start">
+        
+        <div style="text-align:center;padding:20px 16px 16px;overflow:visible !important">
+            <svg width="70" height="90" viewBox="0 0 100 140" fill="none" 
+                 style="margin:0 auto;display:block;margin-bottom:12px;overflow:visible !important">
+                <!-- Head outer (light gray) -->
+                <ellipse cx="50" cy="45" rx="32" ry="35" fill="#e8eaed"/>
+                <!-- Head top connector -->
+                <rect x="40" y="18" width="20" height="12" rx="2" fill="#c5c7cc"/>
+                <!-- Top rounded part -->
+                <ellipse cx="50" cy="22" rx="15" ry="8" fill="#c5c7cc"/>
+                <!-- Ears -->
+                <ellipse cx="18" cy="40" rx="8" ry="12" fill="#c5c7cc"/>
+                <ellipse cx="82" cy="40" rx="8" ry="12" fill="#c5c7cc"/>
+                <!-- Face screen (dark blue) -->
+                <rect x="20" y="28" width="60" height="48" rx="6" fill="#1a3a52"/>
+                <!-- Left eye -->
+                <circle cx="35" cy="45" r="7" fill="#00d4ff" opacity="0.9"/>
+                <circle cx="35" cy="45" r="5" fill="#00e8ff"/>
+                <!-- Right eye -->
+                <circle cx="65" cy="45" r="7" fill="#00d4ff" opacity="0.9"/>
+                <circle cx="65" cy="45" r="5" fill="#00e8ff"/>
+                <!-- Smile (mouth) -->
+                <path d="M 40 60 Q 50 66 60 60" stroke="#00e8ff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <!-- Body upper part -->
+                <ellipse cx="50" cy="95" rx="28" ry="22" fill="#e8eaed"/>
+                <!-- Body connector -->
+                <rect x="35" y="72" width="30" height="8" rx="2" fill="#c5c7cc"/>
+                <!-- Panel line on body -->
+                <rect x="38" y="85" width="24" height="2" rx="1" fill="#d0d2d7"/>
+                <!-- Left arm -->
+                <ellipse cx="15" cy="90" rx="8" ry="14" fill="#c5c7cc" transform="rotate(-25 15 90)"/>
+                <!-- Right arm -->
+                <ellipse cx="85" cy="90" rx="8" ry="14" fill="#c5c7cc" transform="rotate(25 85 90)"/>
+            </svg>
+
+            <p style="margin:0;font-weight:600;color:#0b1220">¿Cómo te puedo ayudar?</p>
+        </div>
+
+        <div id="sw-tessa-options" style="display:grid;gap:8px;padding:0 8px"></div>
+    </div>
+</div>
+
+    </div>
+
+    <div id="support-widget-root" aria-live="polite">
+        <button id="support-toggle" class="sw-btn" aria-expanded="false" aria-label="Atención al cliente">
+                <!-- SVG de auriculares con micrófono -->
+                <svg viewBox="0 0 24 24" aria-hidden="true" width="40" height="40" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 13v-1a9 9 0 0118 0v1" />
+                    <rect x="3" y="13" width="3" height="5" rx="1" />
+                    <rect x="18" y="13" width="3" height="5" rx="1" />
+                    <path d="M19 15v3a1 1 0 01-1 1h-1" />
+                    <path d="M9 16v3a1 1 0 001 1h2" />
+                    <path d="M19 15c0 .8-.7 1.5-1.5 1.5" />
+                    <path d="M15 12c0-1.7-1.3-3-3-3s-3 1.3-3 3" />
+                    <path d="M17 16l3 1" />
+                </svg>
+                <span class="sw-dot" aria-hidden="true"></span>
+            </button>
+        <div id="support-menu" class="sw-menu" role="menu" aria-hidden="true">
+            <button class="sw-option" id="sw-whatsapp" role="menuitem" aria-label="WhatsApp">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 11.5A8.38 8.38 0 0012.5 3 8.5 8.5 0 003 11.5c0 1.4.36 2.77 1.05 3.98L3 21l5.7-1.5A8.5 8.5 0 0021 11.5z"/>
+                    <path d="M17.5 14.5c-.3-.15-1.8-.9-2.1-1s-.5-.15-.7.15-.8 1-.9 1.2-.35.25-.65.1c-1.6-.8-2.6-2.9-2.6-4.4 0-.9.5-1 1-.9.5.05 1 .35 1.5.7.5.35 1 .4 1.6.15.5-.2 1-.7 1.4-1.05.3-.3.6-.4.9-.35.3.05.9.35 1.05.8.15.45.15 1.05-.15 1.7-.3.65-.85 1.6-1.1 1.8z"/>
+                </svg>
+                <span>WhatsApp</span>
+            </button>
+            <button class="sw-option" id="sw-livechat" role="menuitem" aria-label="Live Chat">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 15a2 2 0 01-2 2H8l-5 3V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                    <path d="M7 9h10M7 13h6" />
+                </svg>
+                <span>Live Chat</span>
+            </button>
+            <button class="sw-option" id="sw-tessa" role="menuitem" aria-label="Tessa AI">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                    <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                    <path d="M12 7V5M12 19v-2M7 12H5M19 12h-2"/>
+                </svg>
+                <span>Tessa AI</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="/js/support-widget.js" defer></script>
+    <script>
+      (function(){
+        const WA_PHONE = '50360463073'; // <- reemplaza por tu número (sin +, con código de país)
+        const WA_TEXT = encodeURIComponent('Hola! Necesito ayuda con un pedido.');
+
+        function qs(id){ return document.getElementById(id); }
+
+        const toggle = qs('support-toggle');
+        const menu = qs('support-menu');
+        const whBtn = qs('sw-whatsapp');
+        const liveBtn = qs('sw-livechat');
+        const tessaBtn = qs('sw-tessa');
+
+        if(toggle && menu){
+          toggle.addEventListener('click', ()=>{
+            const expanded = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', !expanded);
+            menu.setAttribute('aria-hidden', expanded);
+          });
+        }
+
+        if(whBtn){
+          whBtn.addEventListener('click', ()=>{
+            window.open(`https://wa.me/${WA_PHONE}?text=${WA_TEXT}`, '_blank');
+          });
+        }
+
+        if(liveBtn){
+          liveBtn.addEventListener('click', ()=>{
+            const modal = qs('sw-livechat-modal');
+            if(modal){ modal.setAttribute('aria-hidden', 'false'); }
+          });
+        }
+
+        if(tessaBtn){
+          tessaBtn.addEventListener('click', ()=>{
+            const modal = qs('sw-tessa-modal');
+            if(modal){ modal.setAttribute('aria-hidden', 'false'); }
+          });
+        }
+
+        document.addEventListener('click', (ev)=>{
+          const tgt = ev.target;
+          if(!menu.contains(tgt) && tgt !== toggle){
+            toggle.setAttribute('aria-expanded', 'false');
+            menu.setAttribute('aria-hidden', 'true');
+          }
+        });
+      })();
+    </script>
+</body>
+</html>
