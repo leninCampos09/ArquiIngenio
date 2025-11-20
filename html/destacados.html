@@ -144,6 +144,113 @@
         accent-color: #0078d4; /* Color personalizado para los checkboxes */
     }
 
+    /* Switch / Toggle styles */
+    .switch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        cursor: pointer;
+    }
+    .switch-text {
+        color: #333;
+        font-size: 0.95rem;
+    }
+    .switch-input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        margin: 0;
+        padding: 0;
+    }
+    .switch-slider {
+        width: 36px;
+        height: 20px;
+        background: #e6eef8;
+        border-radius: 999px;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.18s ease;
+    }
+    .switch-slider::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 2px 6px rgba(3,24,48,0.12);
+        transition: transform 0.18s ease;
+    }
+    .switch-input:checked + .switch-slider {
+        background: linear-gradient(90deg,#0078d4,#005a9e);
+    }
+    .switch-input:checked + .switch-slider::after {
+        transform: translateX(16px);
+    }
+
+    /* Separador visual: línea sutil entre secciones */
+    .filter-sep-line {
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, rgba(0,120,212,0.24), rgba(0,90,158,0.12));
+        margin: 8px 0 12px 0;
+        border-radius: 4px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 1px 4px rgba(0,90,158,0.04);
+    }
+
+    /* Visual badges for category/brand counts (compact) */
+    .filter-item{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:4px 0; }
+    .filter-left{ display:flex; align-items:center; gap:6px; }
+    .filter-label-text{ display:inline-block; }
+    .filter-count{ min-width:22px; height:22px; border-radius:4px; border:1px solid rgba(230,238,248,0.9); display:inline-flex; align-items:center; justify-content:center; color:#043046; background:#fff; font-size:0.82rem; padding:0 4px; box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset; font-weight:600; }
+
+    /* Asegurar que el sidebar abierto quede por encima del header en móvil/tablet */
+    aside.sidebar-open {
+        z-index: 1001 !important;
+    }
+
+    /* Forzar visibilidad del botón de cierre cuando esté abierto en pantallas pequeñas */
+    @media (max-width: 900px) {
+        #sidebarCloseBtn { display: inline-flex !important; position: relative; z-index: 1002; }
+    }
+
+    /* Evitar que elementos internos del drawer se "peguen" al hacer scroll en móvil/tablet */
+    @media (max-width: 900px) {
+        aside {
+            -webkit-overflow-scrolling: touch; /* desplazamiento fluido en iOS */
+            overscroll-behavior: contain; /* evitar chaining del scroll con el body */
+        }
+        aside .switch,
+        aside .switch * {
+            position: relative; /* forzar posición no-sticky */
+        }
+        /* Asegurar que la cabecera del drawer no cubra el contenido al hacer scroll */
+        aside > div[style] { /* el contenedor interior */
+            padding-top: 12px;
+        }
+    }
+
+    /* Evitar que el contenido quede bajo la barra de scroll en móviles/tablet */
+    @media (max-width: 900px) {
+        /* Reservar espacio para la scrollbar y añadir padding interior */
+        aside > div[style*="overflow-y:auto"] {
+            padding-right: 16px; /* espacio para que los toggles no queden pegados */
+            box-sizing: content-box;
+            scrollbar-gutter: stable both-edges;
+        }
+        /* Añadir pequeño padding a cada switch para separarlo del borde */
+        aside .switch {
+            padding-right: 8px;
+        }
+        aside .switch-text {
+            margin-right: 8px;
+        }
+    }
+
     button#applyFilters {
         padding: 10px 16px; /* Reducir el tamaño del botón */
         background: linear-gradient(90deg, #0078d4, #005a9e); /* Gradiente para el botón */
@@ -242,6 +349,10 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M21 21l-4.35-4.35" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="11" cy="11" r="6" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></circle></svg>
                 <input id="searchInput" placeholder="Buscar producto, marca o categoría..." style="width:100%;border:0;background:transparent;outline:none;font-size:14px;" />
             </div>
+            <button id="favoritesBtn" class="icon-btn" onclick="showFavorites()" title="Favoritos" style="background:transparent;border:0;padding:8px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6c-1.5-1.3-3.8-1.2-5.3.3L12 8.1 8.5 4.9C6.9 3.5 4.6 3.6 3.1 4.9 1.3 6.6 1.3 9.6 3.1 11.4l8.9 8.5 8.9-8.5c1.8-1.8 1.8-4.8 0-6.6z"></path></svg>
+                <span id="favoritesBtnCount" style="font-weight:700">0</span>
+            </button>
             <button class="icon-btn" onclick="openCart()" title="Ver carrito" style="background:transparent;border:0;padding:8px;border-radius:8px;cursor:pointer;">
                 🛒 <span id="cartCount" style="margin-left:6px;font-weight:700">0</span>
             </button>
@@ -270,19 +381,38 @@
                     </div>
                     <div style="flex:1;overflow-y:auto;min-height:0;">
                         <div id="specialFilters" style="display:flex;flex-direction:column;gap:10px;">
-                            <label><input type="checkbox" data-filter="special" value="online"> Especiales en línea</label>
-                            <label><input type="checkbox" data-filter="special" value="promotions"> Promociones</label>
-                            <label><input type="checkbox" data-filter="special" value="extreme"> Ofertas Extremas</label>
+                            <label class="switch">
+                                <span class="switch-text">Especiales en línea</span>
+                                <input type="checkbox" class="switch-input" data-filter="special" value="online">
+                                <span class="switch-slider" aria-hidden="true"></span>
+                            </label>
+                            <label class="switch">
+                                <span class="switch-text">Promociones</span>
+                                <input type="checkbox" class="switch-input" data-filter="special" value="promotions">
+                                <span class="switch-slider" aria-hidden="true"></span>
+                            </label>
+                            <label class="switch">
+                                <span class="switch-text">Ofertas Extremas</span>
+                                <input type="checkbox" class="switch-input" data-filter="special" value="extreme">
+                                <span class="switch-slider" aria-hidden="true"></span>
+                            </label>
                         </div>
                         <div style="font-weight:700;margin-top:10px">DISPONIBILIDAD</div>
-                        <label><input id="availOnly" type="checkbox"> Solo disponibles</label>
+                        <div class="filter-sep-line" aria-hidden="true"></div>
+                        <label class="switch">
+                            <span class="switch-text">Solo disponibles</span>
+                            <input id="availOnly" class="switch-input" type="checkbox">
+                            <span class="switch-slider" aria-hidden="true"></span>
+                        </label>
                         <div style="font-weight:700;margin-top:10px">PRECIO</div>
+                        <div class="filter-sep-line" aria-hidden="true"></div>
                         <div style="display:flex;gap:8px;align-items:center">
                             <input id="minPrice" type="number" placeholder="Min ($)" style="width:80px;padding:6px;border-radius:6px;border:1px solid #e6eef8">
                             <span>a</span>
                             <input id="maxPrice" type="number" placeholder="Max ($)" style="width:80px;padding:6px;border-radius:6px;border:1px solid #e6eef8">
                         </div>
                         <div style="font-weight:700;margin-top:10px">CATEGORÍAS</div>
+                        <div class="filter-sep-line" aria-hidden="true"></div>
                         <div id="categoryFilters" style="display:flex;flex-direction:column;gap:6px">
                             <label><input data-filter="category" value="herramientas" type="checkbox"> Herramientas</label>
                             <label><input data-filter="category" value="planos" type="checkbox"> Planos</label>
@@ -298,6 +428,7 @@
                             <label><input data-filter="category" value="iluminacion" type="checkbox"> Iluminación</label>
                         </div>
                         <div style="font-weight:700;margin-top:10px">MARCAS</div>
+                        <div class="filter-sep-line" aria-hidden="true"></div>
                         <input id="brandSearch" type="text" placeholder="Buscar" style="width:100%;padding:6px;border-radius:6px;border:1px solid #e6eef8;margin-bottom:8px">
                         <div id="brandFilters" style="display:flex;flex-direction:column;gap:6px;">
                             <label><input data-filter="brand" value="ProTools" type="checkbox"> ProTools</label>
@@ -307,50 +438,81 @@
                             <label><input data-filter="brand" value="TechCore" type="checkbox"> TechCore</label>
                             <label><input data-filter="brand" value="PowerSafe" type="checkbox"> PowerSafe</label>
                         </div>
-                        <button id="applyFilters" style="margin-top:12px;padding:10px 16px;background:#0078d4;color:white;border:0;border-radius:8px;font-weight:700;font-size:1rem;cursor:pointer">Filtrar</button>
+                        <button id="toggleShowBtn" class="toggle-show-btn" style="margin-top:12px;font-weight:700;">Mostrar más</button>
                     </div>
                 </aside>
                 <!-- Contenido principal -->
                 <section style="flex:1">
                     <nav style="font-size:1rem;color:#6b7280;margin-bottom:18px">
-                        <a href="index.html" style="color:#6b7280;text-decoration:none">Inicio</a> / <span style="color:#0078d4;font-weight:700">Destacados del mes</span>
+                        <a href="index.html" style="color:#6b7280;text-decoration:none">Inicio</a> / <span id="breadcrumbTitle" style="color:#0078d4;font-weight:700">Destacados del mes</span>
                     </nav>
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
-                        <h1 style="font-size:2.2rem;font-weight:800;color:#0b1220;margin:0">Destacados del mes</h1>
-                        <div style="display:flex;align-items:center;gap:8px">
-                            <span style="color:#6b7280;font-size:1rem">Orden</span>
-                            <div id="sortDropdown" class="fluent-dropdown" style="position:relative">
-                                <button id="sortToggle" class="select" type="button" aria-haspopup="listbox" aria-expanded="false">Relevancia</button>
-                                <ul id="sortOptions" role="listbox" aria-label="Ordenar productos" hidden class="dropdown-options" style="position:absolute;right:0;top:calc(100% + 8px);min-width:180px;z-index:60;background:white;border-radius:8px;box-shadow:0 8px 28px rgba(3,24,48,0.12);padding:6px 0;list-style:none;margin:0">
-                                    <li role="option" data-value="Relevancia" aria-selected="true" tabindex="0" style="padding:8px 14px;cursor:pointer">Relevancia</li>
-                                    <li role="option" data-value="Precio menor" tabindex="0" style="padding:8px 14px;cursor:pointer">Precio menor</li>
-                                    <li role="option" data-value="Precio mayor" tabindex="0" style="padding:8px 14px;cursor:pointer">Precio mayor</li>
-                                    <li role="option" data-value="Descuento" tabindex="0" style="padding:8px 14px;cursor:pointer">Descuento</li>
-                                </ul>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between;width:100%">
+                            <div style="display:flex;flex-direction:column;align-items:flex-start;">
+                                <h1 id="productsTitle" style="font-size:1.25rem;font-weight:800;color:#0b1220;margin:0">Destacados del mes</h1>
+                                <p class="muted" style="margin:0 0 0 2px;font-size:rem"><span id="productsSubtitle">Mostrando</span> <span id="shownCount">0</span> productos</p>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px">
+                                <span style="color:#6b7280;font-size:1rem">Orden</span>
+                                <div id="sortDropdown" class="fluent-dropdown" style="position:relative">
+                                    <button id="sortToggle" class="select" type="button" aria-haspopup="listbox" aria-expanded="false">Relevancia</button>
+                                    <ul id="sortOptions" role="listbox" aria-label="Ordenar productos" hidden class="dropdown-options" style="position:absolute;right:0;top:calc(100% + 8px);min-width:180px;z-index:60;background:white;border-radius:8px;box-shadow:0 8px 28px rgba(3,24,48,0.12);padding:6px 0;list-style:none;margin:0">
+                                        <li role="option" data-value="Relevancia" aria-selected="true" tabindex="0" style="padding:8px 14px;cursor:pointer">Relevancia</li>
+                                        <li role="option" data-value="Precio menor" tabindex="0" style="padding:8px 14px;cursor:pointer">Precio menor</li>
+                                        <li role="option" data-value="Precio mayor" tabindex="0" style="padding:8px 14px;cursor:pointer">Precio mayor</li>
+                                        <li role="option" data-value="Descuento" tabindex="0" style="padding:8px 14px;cursor:pointer">Descuento</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                        <div class="flex gap-8" style="margin-bottom:18px;justify-content:flex-end;align-items:center;">
-                            <label class="muted">Vista</label>
-                            <button class="btn btn-ghost view-btn" onclick="gridView()" id="gridBtn" style="background:var(--accent);color:white">Grid</button>
-                            <button class="btn btn-ghost view-btn" onclick="listView()" id="listBtn">Lista</button>
-                        </div>
-                        <div id="products" class="products" aria-live="polite"></div>
-                        <!-- Fluent toast container -->
-                        <div id="fluentToastContainer" aria-live="polite" aria-atomic="true"></div>
-                        <!-- Modal backdrop (used by products.js) -->
-                        <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none">
-                          <div class="modal" id="modalContent"></div>
-                        </div>
-                        <!-- Hidden cart counters for compatibility with products.js -->
-                        <div style="display:none">
-                          <span id="cartCount">0</span>
-                          <span id="cartTotal">0.00</span>
-                          <span id="shownCount">0</span>
-                        </div>
+                    
+                    <div class="flex gap-8" style="margin-bottom:18px;justify-content:flex-end;align-items:center;">
+                        <label class="muted">Vista</label>
+                        <button class="btn btn-ghost view-btn" onclick="gridView()" id="gridBtn" style="background:var(--accent);color:white">Grid</button>
+                        <button class="btn btn-ghost view-btn" onclick="listView()" id="listBtn">Lista</button>
+                    </div>
+                    <div id="products" class="products" aria-live="polite"></div>
+                    <!-- Fluent toast container -->
+                    <div id="fluentToastContainer" aria-live="polite" aria-atomic="true"></div>
+                    <!-- Modal backdrop (used by products.js) -->
+                    <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none">
+                        <div class="modal" id="modalContent"></div>
+                    </div>
+                    <!-- Hidden cart counters for compatibility with products.js -->
+                    <div style="display:none">
+                        <span id="cartCount">0</span>
+                        <span id="cartTotal">0.00</span>
+                        <span id="shownCount">0</span>
+                    </div>
                 </section>
-            </div>
-        </main>
+                        </div>
+                </main>
+                <script src="/js/products.js"></script>
+                <script>
+                // Sincronizar favoritos y mostrar sección al hacer click en el botón de favoritos
+                window.addEventListener("DOMContentLoaded", function() {
+                    if (typeof loadFavorites === "function") {
+                        loadFavorites();
+                        updateFavoritesBadge();
+                    }
+                    var productsTitle = document.getElementById("productsTitle");
+                    var breadcrumbTitle = document.getElementById("breadcrumbTitle");
+                    // Inicializar con destacados
+                    if (typeof renderFeatured === "function") {
+                        renderFeatured(PRODUCTS.filter(p => p.previousPrice));
+                    }
+                    // Si el botón de favoritos existe, mostrar favoritos y cambiar título
+                    var favBtn = document.getElementById("favoritesBtn");
+                    if (favBtn && typeof showFavorites === "function") {
+                        favBtn.onclick = function() {
+                            productsTitle.textContent = "Favoritos";
+                            breadcrumbTitle.textContent = "Favoritos";
+                            showFavorites();
+                        };
+                    }
+                });
+                </script>
     <footer>
         <div class="footer-content">
             <div>
@@ -463,6 +625,23 @@
         <script src="/js/products.js"></script>
                         <script>
                         // Sidebar drawer para móvil/tableta
+                            // Toggle Mostrar más / Mostrar menos: colapsa/expande la lista de MARCAS (mostrar solo 3 inicialmente)
+                            (function(){
+                                var toggle = document.getElementById('toggleShowBtn');
+                                var brands = document.getElementById('brandFilters');
+                                if(!toggle || !brands) return;
+                                // Start collapsed: show only first 3
+                                brands.classList.add('collapsed');
+                                toggle.textContent = 'Mostrar más';
+                                toggle.addEventListener('click', function(e){
+                                    var isCollapsed = brands.classList.toggle('collapsed');
+                                    toggle.textContent = isCollapsed ? 'Mostrar más' : 'Mostrar menos';
+                                    if(!isCollapsed){
+                                        // scroll to brands area for better UX
+                                        brands.scrollIntoView({behavior:'smooth', block:'center'});
+                                    }
+                                });
+                            })();
                         (function(){
                             var sidebar = document.querySelector('aside');
                             var overlay = document.getElementById('sidebarOverlay');
@@ -515,6 +694,51 @@
                         });
                     }
 
+                    // Brand search: filtra la lista de marcas en el sidebar y reaplica filtros
+                    (function wireBrandSearch(){
+                        const brandSearch = document.getElementById('brandSearch');
+                        const brandFilters = document.getElementById('brandFilters');
+                        if(!brandSearch || !brandFilters) return;
+                        // debounce helper
+                        function debounce(fn, wait){
+                            let t;
+                            return function(){
+                                const args = arguments;
+                                clearTimeout(t);
+                                t = setTimeout(()=> fn.apply(null, args), wait);
+                            };
+                        }
+                        function filterBrandList(){
+                            const q = (brandSearch.value || '').trim().toLowerCase();
+                            const labels = Array.from(brandFilters.querySelectorAll('label'));
+                            if(labels.length === 0) return;
+                            labels.forEach(label => {
+                                const text = (label.textContent || '').trim().toLowerCase();
+                                if(!q) {
+                                    label.style.display = 'flex';
+                                } else {
+                                    label.style.display = text.includes(q) ? 'flex' : 'none';
+                                }
+                            });
+                            // Nota: no reaplicamos filtros automáticamente para que la búsqueda actúe
+                            // solo como sugerencia; el usuario debe confirmar (Enter o marcar)
+                        }
+                        brandSearch.addEventListener('input', debounce(filterBrandList, 120));
+                        // Also wire Enter to focus first matching brand checkbox
+                        brandSearch.addEventListener('keydown', function(e){
+                            if(e.key === 'Enter'){
+                                // Al presionar Enter, marcar la primera marca visible y aplicar filtros
+                                const firstVisibleLabel = Array.from(brandFilters.querySelectorAll('label')).find(l => (l.style.display || '') !== 'none');
+                                if(firstVisibleLabel){
+                                    const cb = firstVisibleLabel.querySelector('input[data-filter="brand"]');
+                                    if(cb){ cb.checked = true; }
+                                    if(typeof applyFiltersAndRender === 'function') applyFiltersAndRender(getCurrent());
+                                }
+                                e.preventDefault();
+                            }
+                        });
+                    })();
+
                                         function renderSorted(option, list){
                                             let lst = Array.isArray(list) ? list.slice() : featured.slice(); // copy
                                             if(option === 'Precio menor') lst.sort((a,b)=>a.price - b.price);
@@ -554,6 +778,72 @@
                                                 });
                                             }
 
+                                            // update visual counts for categories (purely visual, does not change filtering logic)
+                                            (function updateCategoryCounts(){
+                                                try{
+                                                    const categoryContainer = document.getElementById('categoryFilters');
+                                                    if(!categoryContainer) return;
+                                                    const inputs = Array.from(categoryContainer.querySelectorAll('input[data-filter="category"]'));
+                                                    if(!inputs.length) return;
+                                                    // prepare count map
+                                                    const counts = {};
+                                                    inputs.forEach(i=> counts[i.value] = 0);
+                                                    // compute base considering other filters except category itself
+                                                    const base = featured.slice().filter(p=>{
+                                                        // specials
+                                                        if(specialsChecked.length){
+                                                            let keep = false;
+                                                            for(const s of specialsChecked){
+                                                                if(s==='online' && ['planos','software'].includes((p.category||'').toLowerCase())) keep = true;
+                                                                if(s==='promotions' && typeof p.previousPrice !== 'undefined') keep = true;
+                                                                if(s==='extreme' && p.price >= 300) keep = true;
+                                                            }
+                                                            if(!keep) return false;
+                                                        }
+                                                        // availability
+                                                        if(availOnly && !((p.stock||0) > 0)) return false;
+                                                        // price
+                                                        if((minP !== null) && p.price < minP) return false;
+                                                        if((maxP !== null) && p.price > maxP) return false;
+                                                        return true;
+                                                    });
+                                                    // count per category (case-insensitive contains)
+                                                    base.forEach(p=>{
+                                                        const pc = (p.category||'').toLowerCase();
+                                                        Object.keys(counts).forEach(k=>{ if(pc.includes((k||'').toLowerCase())) counts[k]++; });
+                                                    });
+                                                    // update labels DOM with counts and structure
+                                                    inputs.forEach(i=>{
+                                                        const label = i.closest('label');
+                                                        if(!label) return;
+                                                        label.classList.add('filter-item');
+                                                        // ensure left wrapper
+                                                        let left = label.querySelector('.filter-left');
+                                                        if(!left){
+                                                            left = document.createElement('span'); left.className = 'filter-left';
+                                                            // move the existing input into left
+                                                            left.appendChild(i);
+                                                            // find existing text nodes for label and move into filter-label-text
+                                                            let txt = label.querySelector('.filter-label-text');
+                                                            if(!txt){
+                                                                txt = document.createElement('span'); txt.className = 'filter-label-text';
+                                                                // collect text content from label (excluding input)
+                                                                const text = Array.from(label.childNodes).filter(n=> n.nodeType===3).map(n=>n.textContent.trim()).join(' ').trim();
+                                                                txt.textContent = text;
+                                                                // remove original text nodes
+                                                                Array.from(label.childNodes).filter(n=> n.nodeType===3).forEach(n=> n.remove());
+                                                            }
+                                                            left.appendChild(txt);
+                                                            label.insertBefore(left, label.firstChild);
+                                                        }
+                                                        // ensure count span
+                                                        let cnt = label.querySelector('.filter-count');
+                                                        if(!cnt){ cnt = document.createElement('span'); cnt.className = 'filter-count'; cnt.setAttribute('aria-hidden','true'); label.appendChild(cnt); }
+                                                        cnt.textContent = counts[i.value] || '0';
+                                                    });
+                                                }catch(e){ console.warn('updateCategoryCounts', e); }
+                                            })();
+
                                             // categories
                                             if(categoriesChecked.length){
                                                 list = list.filter(p => categoriesChecked.some(c => (p.category||'').toLowerCase().includes(c)));
@@ -570,10 +860,21 @@
                                                 }
                                                 // Obtener marcas únicas de los productos filtrados
                                                 const brands = Array.from(new Set(filtered.map(p => p.manufacturer))).filter(Boolean).sort();
+                                                // Contar productos por marca en el conjunto filtrado
+                                                const counts = {};
+                                                filtered.forEach(p=>{ if(p.manufacturer) counts[p.manufacturer] = (counts[p.manufacturer]||0) + 1; });
                                                 // Guardar marcas seleccionadas antes de actualizar
                                                 const selectedBrands = Array.from(brandFilters.querySelectorAll('input[data-filter="brand"]:checked')).map(i=>i.value);
-                                                // Renderizar checkboxes
-                                                brandFilters.innerHTML = brands.length ? brands.map(b => `<label><input data-filter="brand" value="${b}" type="checkbox"${selectedBrands.includes(b)?' checked':''}> ${b}</label>`).join('') : '<div class="muted">No hay marcas para esta categoría</div>';
+                                                // Renderizar checkboxes con badge de cuenta (visual)
+                                                if(!brands.length){
+                                                    brandFilters.innerHTML = '<div class="muted">No hay marcas para esta categoría</div>';
+                                                } else {
+                                                    brandFilters.innerHTML = brands.map(b => {
+                                                        const checked = selectedBrands.includes(b) ? ' checked' : '';
+                                                        const cnt = counts[b] || 0;
+                                                        return `<label class="filter-item"><span class="filter-left"><input data-filter="brand" value="${b}" type="checkbox"${checked}> <span class="filter-label-text">${b}</span></span><span class="filter-count" aria-hidden="true">${cnt}</span></label>`;
+                                                    }).join('');
+                                                }
                                             })();
                                             // brands (checkboxes + search input)
                                             if(brandsChecked.length || (brandQuery && brandQuery.trim())){
@@ -684,6 +985,41 @@
                                         if(applyBtn) applyBtn.addEventListener('click', ()=> applyFiltersAndRender(getCurrent()));
                                         // optional: apply on change for quick feedback
                                         document.querySelectorAll('#specialFilters input, #categoryFilters input, #brandFilters input, #availOnly, #minPrice, #maxPrice').forEach(el=> el.addEventListener('change', ()=> applyFiltersAndRender(getCurrent())));
+
+                                        // Category visibility: show only selected categories in the sidebar when any are checked.
+                                        function updateCategoryVisibility(){
+                                            try{
+                                                const container = document.getElementById('categoryFilters');
+                                                if(!container) return;
+                                                const labels = Array.from(container.querySelectorAll('label'));
+                                                const checkedInputs = Array.from(container.querySelectorAll('input[data-filter="category"]:checked'));
+                                                if(checkedInputs.length === 0){
+                                                    // show all
+                                                    labels.forEach(l=> { l.style.display = 'flex'; });
+                                                } else {
+                                                    const checkedSet = new Set(checkedInputs.map(i=> i.value));
+                                                    labels.forEach(l=>{
+                                                        const inp = l.querySelector('input[data-filter="category"]');
+                                                        if(!inp) return;
+                                                        if(checkedSet.has(inp.value)) l.style.display = 'flex'; else l.style.display = 'none';
+                                                    });
+                                                }
+                                            }catch(e){ console.warn('updateCategoryVisibility', e); }
+                                        }
+
+                                        // Use event delegation so it works even if inputs are recreated
+                                        const categoryContainer = document.getElementById('categoryFilters');
+                                        if(categoryContainer){
+                                            categoryContainer.addEventListener('change', function(e){
+                                                if(e.target && e.target.matches && e.target.matches('input[data-filter="category"]')){
+                                                    // Update visibility and re-run filters
+                                                    updateCategoryVisibility();
+                                                    applyFiltersAndRender(getCurrent());
+                                                }
+                                            });
+                                            // initial sync
+                                            updateCategoryVisibility();
+                                        }
 
                 }catch(e){console.error(e)}
             })();

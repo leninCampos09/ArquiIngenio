@@ -472,6 +472,25 @@
 .savings{ color:#e53935; font-weight:700; font-size:0.95rem; margin-top:6px; text-transform:uppercase }
 .savings .caret{ font-size:0.9rem; margin-left:6px }
 
+/* Botón de promoción compacto */
+.promo-btn{
+  display:inline-block;
+  margin:4px 0 0 0;
+  padding:4px 6px;
+  font-size:11px;
+  border-radius:5px;
+  border:0;
+  background: linear-gradient(90deg,#ffb020,#ff7a00);
+  color:#08131a;
+  font-weight:700;
+  cursor:pointer;
+}
+.promo-btn:hover{ filter:brightness(0.97); transform:translateY(-1px); }
+
+@media (max-width:480px){
+  .promo-btn{ padding:4px 6px; font-size:10px }
+}
+
 /* Custom Fluent-style for the sort dropdown on destacados.html */
 #sortSelect.select{
   min-width:160px;
@@ -616,3 +635,74 @@
       color: var(--muted);
       font-size: 14px;
     }
+
+    /* Banner de promoción dentro del modal de producto */
+    .promo-modal-banner{ 
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background: linear-gradient(90deg,#ff6b4a,#ff8866); /* softer orange gradient */
+      color: #fff;
+      padding:8px 14px;
+      border-radius:999px;
+      max-width:420px;
+      margin:0 0 12px 0;
+      box-shadow: 0 8px 22px rgba(255,102,80,0.18);
+      font-weight:800;
+      font-size:13px;
+    }
+    .promo-modal-banner svg{ flex:0 0 28px; width:28px; height:28px; display:block; }
+    .promo-icon{ display:block; vertical-align:middle }
+    .promo-modal-banner span{ display:inline-block; vertical-align:middle }
+
+    @media (max-width:600px){
+      .promo-modal-banner{ max-width:100%; padding:6px 10px; font-size:12px }
+    }
+
+    /* styling for promo image used in modal banner */
+    .promo-modal-img{
+      height:28px;
+      width:auto;
+      display:block;
+      flex:0 0 auto;
+      border-radius:6px;
+    }
+
+    @media (max-width:600px){
+      .promo-modal-img{ height:22px }
+    }
+
+/* Mostrar más / Mostrar menos: colapsar lista de productos mostrando solo los primeros 4 */
+.products.collapsed .card:nth-child(n+5){
+  display: none !important;
+}
+
+/* Botón compacto para mostrar más/menos */
+.toggle-show-btn{
+  padding:6px 10px;
+  font-size:0.95rem;
+  border-radius:8px;
+  background: transparent; /* no fill, only border + text */
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  cursor: pointer;
+  box-shadow: none;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+.toggle-show-btn:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(3,24,48,0.06);
+  background: rgba(0,120,212,0.04); /* subtle hover tint */
+}
+.toggle-show-btn:focus{
+  outline: none;
+  box-shadow: 0 0 0 6px rgba(0,120,212,0.06);
+}
+
+/* Colapsar marcas: mostrar solo 3 elementos y ocultar el resto */
+#brandFilters.collapsed label:nth-child(n+4){
+  display:none !important;
+}
+
+/* Ajustes visuales para las etiquetas de marca */
+#brandFilters label{ display:flex; align-items:center; gap:8px; }

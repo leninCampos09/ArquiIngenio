@@ -86,6 +86,10 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M21 21l-4.35-4.35" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="11" cy="11" r="6" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></circle></svg>
         <input id="searchInput" placeholder="Buscar producto, marca o categoría..." style="width:100%;border:0;background:transparent;outline:none;font-size:14px;" />
       </div>
+      <button id="favoritesBtn" class="icon-btn" onclick="showFavorites()" title="Favoritos" style="background:transparent;border:0;padding:8px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6c-1.5-1.3-3.8-1.2-5.3.3L12 8.1 8.5 4.9C6.9 3.5 4.6 3.6 3.1 4.9 1.3 6.6 1.3 9.6 3.1 11.4l8.9 8.5 8.9-8.5c1.8-1.8 1.8-4.8 0-6.6z"></path></svg>
+        <span id="favoritesBtnCount" style="font-weight:700">0</span>
+      </button>
       <button class="icon-btn" onclick="openCart()" title="Ver carrito" style="background:transparent;border:0;padding:8px;border-radius:8px;cursor:pointer;">
         🛒 <span id="cartCount" style="margin-left:6px;font-weight:700">0</span>
       </button>
@@ -149,6 +153,9 @@
     </aside>
 
     <section>
+      <nav style="font-size:1rem;color:#6b7280;margin-bottom:10px">
+        <a href="index.html" style="color:#6b7280;text-decoration:none">Inicio</a> / <span id="breadcrumbProducts" style="color:#0078d4;font-weight:700">Productos</span>
+      </nav>
       <div style="display:flex;justify-content:space-between;align-items:end;margin-bottom:12px">
         <div>
           <h2 id="productsTitle" style="margin:0">Productos</h2>
@@ -163,6 +170,10 @@
 
       <div id="products" class="products" aria-live="polite">
         <!-- Product cards injected by JS -->
+      </div>
+      <div id="favoritesSection" class="products" style="margin-top:32px;display:none">
+         <h2 style="margin-bottom:16px">Favoritos</h2>
+         <div id="favorites" class="products"></div>
       </div>
     </section>
   </main>
@@ -324,6 +335,10 @@
     </footer>
 
   <script src="/js/products.js"></script>
+  <script>
+    // Mostrar las cards con el mismo estilo que en destacados.html
+    window.USE_FEATURED_CARDS = true;
+  </script>
 
     <div id="support-widget-root" aria-live="polite">
         <button id="support-toggle" class="sw-btn" aria-expanded="false" aria-label="Atención al cliente">
